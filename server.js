@@ -4,8 +4,8 @@ const mongoose = require('mongoose')
 const cors = require('cors')
 
 // require route files
-const exampleRoutes = require('./app/routes/example_routes')
-const userRoutes = require('./app/routes/user_routes')
+const doctorRoutes = require('./app/routes/doctorRoutes')
+const userRoutes = require('./app/routes/userRoutes')
 
 // require middleware
 const errorHandler = require('./lib/error_handler')
@@ -61,7 +61,7 @@ app.use(express.urlencoded({ extended: true }))
 app.use(requestLogger)
 
 // register route files
-app.use(exampleRoutes)
+app.use(doctorRoutes)
 app.use(userRoutes)
 
 // register error handling middleware
@@ -69,8 +69,9 @@ app.use(userRoutes)
 // passed any error messages from them
 app.use(errorHandler)
 
+app.get('/', (req, res) => res.send('Hello World!'))
 // run API on designated port (4741 in this case)
-app.listen(port, () => {
+app.listen(4741, () => {
   console.log('listening on port ' + port)
 })
 
