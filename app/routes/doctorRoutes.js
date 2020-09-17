@@ -1,67 +1,18 @@
 // Express docs: http://expressjs.com/en/api.html
 const express = require('express')
 // Passport docs: http://www.passportjs.org/docs/
-const passport = require('passport')
 
-// pull in Mongoose model for examples
-const Doctor = require('../models/doctor')
-
-// this is a collection of methods that help us detect situations when we need
-// to throw a custom error
-const customErrors = require('../../lib/custom_errors')
-
-// we'll use this function to send 404 when non-existant document is requested
-const handle404 = customErrors.handle404
-// we'll use this function to send 401 when a user tries to modify a resource
-// that's owned by someone else
-const requireOwnership = customErrors.requireOwnership
-
-// this is middleware that will remove blank fields from `req.body`, e.g.
-// { example: { title: '', text: 'foo' } } -> { example: { text: 'foo' } }
-const removeBlanks = require('../../lib/remove_blank_fields')
-// passing this as a second argument to `router.<verb>` will make it
-// so that a token MUST be passed for that route to be available
-// it will also set `req.user`
-const requireToken = passport.authenticate('bearer', { session: false })
-
-// instantiate a router (mini app that only handles routes)
 const router = express.Router()
 
-// INDEX
-// GET /examples
-router.get('/doctors', requireToken, (req, res, next) => {
-  Doctor.find()
-    .then(examples => {
-      // `examples` will be an array of Mongoose documents
-      // we want to convert each one to a POJO, so we use `.map` to
-      // apply `.toObject` to each one
-      return examples.map(example => example.toObject())
-    })
-    // respond with status 200 and JSON of the examples
-    .then(examples => res.status(200).json({ examples: examples }))
-    // if an error occurs, pass it to the handler
-    .catch(next)
-})
-
-// SHOW
-// GET /examples/5a7db6c74d55bc51bdf39793
-router.get('/examples/:id', requireToken, (req, res, next) => {
-  // req.params.id will be set based on the `:id` in the route
-  Example.findById(req.params.id)
-    .then(handle404)
-    // if `findById` is succesful, respond with 200 and "example" JSON
-    .then(example => res.status(200).json({ example: example.toObject() }))
-    // if an error occurs, pass it to the handler
-    .catch(next)
-})
+// pull in Mongoose model for doctor
+const Doctor = require('../models/doctor')
 
 // CREATE
 // POST /examples
-router.post('/doctors', requireToken, (req, res, next) => {
-  // set owner of new example to be current user
-  req.body.doctor.owner = req.user.id
+router.post('/doctors', (req, res, next) => {
+  const doctorData = req.body.doctor
 
-  Doctor.create(req.body.doctor)
+  Doctor.create(doctorData)
     // respond to succesful `create` with status 201 and JSON of new "example"
     .then(doctor => {
       res.status(201).json({ doctor: doctor.toObject() })
@@ -72,43 +23,41 @@ router.post('/doctors', requireToken, (req, res, next) => {
     .catch(next)
 })
 
+// INDEX
+// GET /doctors
+router.get('/doctors', (req, res, next) => {
+  Doctor.find()
+    .then(doctors => res.json({ doctors: doctors }))
+    .catch(next)
+})
+
+// SHOW
+// GET /doctors/:id
+router.get('/doctors/:id', (req, res, next) => {
+  const id = req.params.id
+  Doctor.findById(id)
+    .then(doctor => res.json({ doctor: doctor }))
+    .catch(next)
+})
+
 // UPDATE
-// PATCH /examples/5a7db6c74d55bc51bdf39793
-router.patch('/examples/:id', requireToken, removeBlanks, (req, res, next) => {
-  // if the client attempts to change the `owner` property by including a new
-  // owner, prevent that by deleting that key/value pair
-  delete req.body.example.owner
-
-  Example.findById(req.params.id)
-    .then(handle404)
-    .then(example => {
-      // pass the `req` object and the Mongoose record to `requireOwnership`
-      // it will throw an error if the current user isn't the owner
-      requireOwnership(req, example)
-
-      // pass the result of Mongoose's `.update` to the next `.then`
-      return example.updateOne(req.body.example)
-    })
-    // if that succeeded, return 204 and no JSON
+// PATCH /doctors/:id
+router.patch('/doctors/:id', (req, res, next) => {
+  const id = req.params.id
+  const doctorData = req.body.doctor
+  Doctor.findById(id)
+    .then(doctor => doctor.updateOne(doctorData))
     .then(() => res.sendStatus(204))
-    // if an error occurs, pass it to the handler
     .catch(next)
 })
 
 // DESTROY
-// DELETE /examples/5a7db6c74d55bc51bdf39793
-router.delete('/examples/:id', requireToken, (req, res, next) => {
-  Example.findById(req.params.id)
-    .then(handle404)
-    .then(example => {
-      // throw an error if current user doesn't own `example`
-      requireOwnership(req, example)
-      // delete the example ONLY IF the above didn't throw
-      example.deleteOne()
-    })
-    // send back 204 and no content if the deletion succeeded
+// DELETE /doctors/:id
+router.delete('/doctors/:id', (req, res, next) => {
+  const id = req.params.id
+  Doctor.findById(id)
+    .then(doctor => doctor.deleteOne())
     .then(() => res.sendStatus(204))
-    // if an error occurs, pass it to the handler
     .catch(next)
 })
 

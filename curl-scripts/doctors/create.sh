@@ -1,13 +1,9 @@
-#!/bin/bash
+# sh curl-scripts/index.sh
 
-API="http://localhost:4741"
-URL_PATH="/doctors"
-
-curl "${API}${URL_PATH}" \
+curl 'http://localhost:4741/doctors' \
   --include \
   --request POST \
   --header "Content-Type: application/json" \
-  --header "Authorization: Bearer ${TOKEN}" \
   --data '{
     "doctor": {
       "name": "'"${NAME}"'",
@@ -18,5 +14,3 @@ curl "${API}${URL_PATH}" \
       "yearsOfExperience": "'"${YOE}"'"
     }
   }'
-
-echo
