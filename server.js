@@ -1,6 +1,8 @@
-// require necessary NPM packages
+// require express module
 const express = require('express')
+// require the mongoose library
 const mongoose = require('mongoose')
+// require the cors library
 const cors = require('cors')
 
 // require route files

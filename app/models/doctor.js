@@ -1,5 +1,7 @@
+// requiring mangoose library
 const mongoose = require('mongoose')
 
+// creating the doctorsSchema
 const doctorSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -23,15 +25,13 @@ const doctorSchema = new mongoose.Schema({
   },
   yearsOfExperience: {
     type: Number,
-    required: true
-  },
-  owner: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
+    required: true,
+    min: 0
   }
+
 }, {
   timestamps: true
 })
 
+// Exporting the doctorSchema to use in other folder.
 module.exports = mongoose.model('Doctor', doctorSchema)
