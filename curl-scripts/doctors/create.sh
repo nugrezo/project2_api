@@ -4,6 +4,7 @@ curl 'http://localhost:4741/doctors' \
   --include \
   --request POST \
   --header "Content-Type: application/json" \
+  --header "Authorization: Bearer ${TOKEN}" \
   --data '{
     "doctor": {
       "name": "'"${NAME}"'",
