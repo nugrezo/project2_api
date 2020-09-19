@@ -73,7 +73,7 @@ app.use(errorHandler)
 
 app.get('/', (req, res) => res.send('Hello World!'))
 // run API on designated port (4741 in this case)
-app.listen(4741, () => {
+app.listen(port, () => {
   console.log('listening on port ' + port)
 })
 
