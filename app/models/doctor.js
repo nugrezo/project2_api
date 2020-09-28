@@ -27,9 +27,15 @@ const doctorSchema = new mongoose.Schema({
     type: Number,
     required: true,
     min: 0
-  }
+  },
 
-}, {
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  }
+},
+{
   timestamps: true
 })
 

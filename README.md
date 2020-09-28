@@ -11,7 +11,7 @@ than sign-in.
 
 **Important Links**
 
-- Deployed Repo: https://github.com/nugrezo/project2_api
+Frontend repo can be found here: https://github.com/nugrezo/project2_client
 
 **Planning Story**
 
