@@ -7,9 +7,9 @@ curl 'http://localhost:4741/doctors' \
   --header "Authorization: Bearer ${TOKEN}" \
   --data '{
     "doctor": {
-      "name": "'"${NAME}"'",
-      "surName": "'"${SURNAME}"'",
-      "profession": "'"${PRFS}"'",
+      "fileName": "'"${FILENAME}"'",
+      "tag": "'"${TAG}"'",
+      "description": "'"${DESCRIPTION}"'",
       "phone": "'"${PHONE}"'",
       "address": "'"${ADDRESS}"'",
       "yearsOfExperience": "'"${YOE}"'"

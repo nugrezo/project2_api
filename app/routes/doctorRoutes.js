@@ -22,7 +22,7 @@ const removeBlanks = require('../../lib/remove_blank_fields')
 router.post('/doctors', requireToken, (req, res, next) => {
   req.body.doctor.owner = req.user._id
   const doctorData = req.body.doctor
-
+  console.log(doctorData)
   Doctor.create(doctorData)
     .then(doctor => res.status(201).json({ doctor }))
     .catch(next)
